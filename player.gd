@@ -31,6 +31,10 @@ func _physics_process(delta):
 			alreadyDoubleJumped = true
 
 	var direction = Input.get_axis("left", "right")
+	if Input.is_action_just_pressed("dash"):
+		var dashDir = Vector2(direction, 0)
+		velocity = velocity.move_toward(dashDir * 500,  1000)
+		
 	
 	if direction:
 		velocity.x = move_toward(velocity.x, movement_data.SPEED * direction, movement_data.ACCELERATION * delta)
