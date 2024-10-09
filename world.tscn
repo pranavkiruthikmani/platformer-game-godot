@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ccrcyvy7hfiny"]
+[gd_scene load_steps=5 format=3 uid="uid://ccrcyvy7hfiny"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_6ohms"]
 [ext_resource type="PackedScene" uid="uid://bh4alyww218i0" path="res://player.tscn" id="2_idbdo"]
 [ext_resource type="PackedScene" uid="uid://k6a3ebe04yih" path="res://level_tile_map.tscn" id="4_1rf45"]
+[ext_resource type="PackedScene" uid="uid://43fp670weg3f" path="res://level_change.tscn" id="4_vtyfp"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_6ohms")
@@ -10,3 +11,5 @@ script = ExtResource("1_6ohms")
 [node name="CharacterBody2D" parent="." instance=ExtResource("2_idbdo")]
 
 [node name="LevelTileMap" parent="." instance=ExtResource("4_1rf45")]
+
+[node name="LevelChange" parent="." instance=ExtResource("4_vtyfp")]

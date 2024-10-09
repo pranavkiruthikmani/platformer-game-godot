@@ -113,4 +113,13 @@ collision_mask = 4
 position = Vector2(0, -8.5)
 shape = SubResource("RectangleShape2D_4426a")
 
+[node name="LevelChangeDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LevelChangeDetector"]
+position = Vector2(0, -8.5)
+shape = SubResource("RectangleShape2D_4426a")
+
 [connection signal="area_entered" from="HazardDetector" to="." method="_on_hazard_detector_area_entered"]
+[connection signal="area_entered" from="LevelChangeDetector" to="." method="_on_level_change_detector_area_entered"]

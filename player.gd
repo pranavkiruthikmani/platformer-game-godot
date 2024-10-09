@@ -12,6 +12,7 @@ extends CharacterBody2D
 @onready var starting_position = global_position
 
 var alreadyDoubleJumped = false
+var current_scence = null
 
 func _physics_process(delta):
 	
@@ -37,8 +38,7 @@ func _physics_process(delta):
 		velocity.x = move_toward(velocity.x, 0, 200 * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0, movement_data.FRICTION * delta)
-	
-	
+		
 	update_animations(direction)
 	var was_on_floor = is_on_floor()
 	move_and_slide()
@@ -58,3 +58,13 @@ func update_animations(input_axis):
 
 func _on_hazard_detector_area_entered(area):
 	global_position = starting_position
+
+
+func _on_level_change_detector_area_entered(area):
+	var current_scene = str(get_tree().current_scene.name)
+	var current_level = int(current_scene[5])
+	var next_level = str(current_level + 1)
+	var path_level = "res://level1.tscn"
+	path_level[11] = next_level
+	get_tree().change_scene_to_file(path_level)
+	
