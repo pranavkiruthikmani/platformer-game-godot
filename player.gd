@@ -14,20 +14,10 @@ extends CharacterBody2D
 @onready var decel_timer = $DecelTimer
 
 var alreadyDoubleJumped = false
-var current_scence = null
 var dashSpeed = 500
-var canDash = false
-var justDashed = false
-var dashDeceleration = 200
-var dashing = false
-var TimeForDash = 0.2
-var dashTime = TimeForDash
-var startDecel = false
-var isGravity = true
 var prevDir = null
 
-func _physics_process(delta):
-	
+func _physics_process(delta):	
 	#Gravity
 	if not is_on_floor() and dash_timer.is_stopped():
 		velocity.y += gravity * delta
@@ -96,8 +86,4 @@ func _on_level_change_detector_area_entered(area):
 	get_tree().change_scene_to_file(path_level)
 
 func _on_dash_timer_timeout():
-	decel_timer.start()
 	velocity.x = movement_data.SPEED * prevDir
-
-func _on_decel_timer_timeout():
-	pass
