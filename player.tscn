@@ -121,5 +121,9 @@ collision_mask = 8
 position = Vector2(0, -8.5)
 shape = SubResource("RectangleShape2D_4426a")
 
+[node name="DashTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
 [connection signal="area_entered" from="HazardDetector" to="." method="_on_hazard_detector_area_entered"]
 [connection signal="area_entered" from="LevelChangeDetector" to="." method="_on_level_change_detector_area_entered"]

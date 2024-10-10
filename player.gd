@@ -10,15 +10,23 @@ extends CharacterBody2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
 @onready var coyote_jump_timer = $CoyoteJumpTimer
 @onready var starting_position = global_position
+@onready var dash_timer = $DashTimer
 
 var alreadyDoubleJumped = false
 var current_scence = null
+var dashSpeed = 500
+var canDash = false
+var justDashed = false
+var dashDeceleration = 200
+var dashing = false
 
 func _physics_process(delta):
 	
-	if not is_on_floor():
+	#Gravity
+	if not is_on_floor() and dash_timer.is_stopped():
 		velocity.y += gravity * delta
 
+#Double Jump
 	if is_on_floor() or coyote_jump_timer.time_left > 0:
 		alreadyDoubleJumped = false
 		if Input.is_action_just_pressed("jump"):
@@ -31,18 +39,27 @@ func _physics_process(delta):
 			alreadyDoubleJumped = true
 
 	var direction = Input.get_axis("left", "right")
-	if Input.is_action_just_pressed("dash"):
-		var dashDir = Vector2(direction, 0)
-		velocity = velocity.move_toward(dashDir * 500,  1000)
-		
 	
-	if direction:
+	#Dash
+	canDash = true
+	if Input.is_action_just_pressed("dash") and canDash: 
+		var prevVelocity = velocity
+		dash_timer.start()
+		var dashDir = Vector2(direction, 0)
+		if dash_timer.time_left > 0:
+			canDash = false
+			velocity.x = velocity.x * 5
+			#velocity = velocity.move_toward(dashDir * dashSpeed, delta * 25000)
+		
+	#Movement and Friction
+	if direction and dash_timer.is_stopped():
 		velocity.x = move_toward(velocity.x, movement_data.SPEED * direction, movement_data.ACCELERATION * delta)
-	elif direction == 0 and not is_on_floor():
+	elif direction == 0 and not is_on_floor() and dash_timer.is_stopped():
 		velocity.x = move_toward(velocity.x, 0, 200 * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0, movement_data.FRICTION * delta)
-		
+	
+	#Animation and Coyote Jump
 	update_animations(direction)
 	var was_on_floor = is_on_floor()
 	move_and_slide()
@@ -50,6 +67,7 @@ func _physics_process(delta):
 	if just_left_ledge:
 		coyote_jump_timer.start()
 	
+#Animations
 func update_animations(input_axis):
 	if input_axis != 0:
 		animated_sprite_2d.flip_h = (input_axis < 0)
@@ -60,10 +78,11 @@ func update_animations(input_axis):
 	if not is_on_floor():
 		animated_sprite_2d.play("jump")
 
+#Respawn
 func _on_hazard_detector_area_entered(area):
 	global_position = starting_position
 
-
+#Level Change
 func _on_level_change_detector_area_entered(area):
 	var current_scene = str(get_tree().current_scene.name)
 	var current_level = int(current_scene[5])
@@ -71,4 +90,4 @@ func _on_level_change_detector_area_entered(area):
 	var path_level = "res://level1.tscn"
 	path_level[11] = next_level
 	get_tree().change_scene_to_file(path_level)
-	
+
