@@ -11,6 +11,7 @@ extends CharacterBody2D
 @onready var coyote_jump_timer = $CoyoteJumpTimer
 @onready var starting_position = global_position
 @onready var dash_timer = $DashTimer
+@onready var decel_timer = $DecelTimer
 
 var alreadyDoubleJumped = false
 var current_scence = null
@@ -19,6 +20,11 @@ var canDash = false
 var justDashed = false
 var dashDeceleration = 200
 var dashing = false
+var TimeForDash = 0.2
+var dashTime = TimeForDash
+var startDecel = false
+var isGravity = true
+var prevDir = null
 
 func _physics_process(delta):
 	
@@ -41,15 +47,13 @@ func _physics_process(delta):
 	var direction = Input.get_axis("left", "right")
 	
 	#Dash
-	canDash = true
-	if Input.is_action_just_pressed("dash") and canDash: 
-		var prevVelocity = velocity
+	if Input.is_action_just_pressed("dash"): 
+		prevDir = direction
 		dash_timer.start()
 		var dashDir = Vector2(direction, 0)
-		if dash_timer.time_left > 0:
-			canDash = false
-			velocity.x = velocity.x * 5
-			#velocity = velocity.move_toward(dashDir * dashSpeed, delta * 25000)
+		velocity.x = velocity.x * 5
+		velocity.y = 0
+		#velocity = velocity.move_toward(dashDir * dashSpeed, delta * 25000)
 		
 	#Movement and Friction
 	if direction and dash_timer.is_stopped():
@@ -91,3 +95,9 @@ func _on_level_change_detector_area_entered(area):
 	path_level[11] = next_level
 	get_tree().change_scene_to_file(path_level)
 
+func _on_dash_timer_timeout():
+	decel_timer.start()
+	velocity.x = movement_data.SPEED * prevDir
+
+func _on_decel_timer_timeout():
+	pass
